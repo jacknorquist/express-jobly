@@ -56,10 +56,10 @@ describe("create", function () {
   });
 });
 
-/************************************** findAll */
-describe("findAll", function () {
+/************************************** search */
+describe("search", function () {
   test("works: no filter", async function () {
-    let companies = await Company.findAll();
+    let companies = await Company.search();
     expect(companies).toEqual([
       {
         handle: "c1",
@@ -85,7 +85,7 @@ describe("findAll", function () {
     ]);
   });
   test("works: filter nameLike", async function () {
-    let companies = await Company.findAll({ nameLike: "2" });
+    let companies = await Company.search({ nameLike: "2" });
     expect(companies).toEqual([
       {
         handle: "c2",
@@ -97,7 +97,7 @@ describe("findAll", function () {
     ]);
   });
   test("works: filter namelike, minEmp, maxEmp", async function () {
-    let companies = await Company.findAll({ nameLike: "c", minEmployees: 1, maxEmployees: 2 });
+    let companies = await Company.search({ nameLike: "c", minEmployees: 1, maxEmployees: 2 });
     expect(companies).toEqual([
       {
         handle: "c1",
@@ -116,7 +116,7 @@ describe("findAll", function () {
     ]);
   });
   test("works: filter w empty params", async function () {
-    let companies = await Company.findAll({});
+    let companies = await Company.search({});
     expect(companies).toEqual([
       {
         handle: "c1",

@@ -50,17 +50,15 @@ class Company {
     return company;
   }
 
-  /** Find all companies.
+  /** Finds all companies that match the input search parameters.
+   * searchParams will contain some (or none) of minEmployees, maxEmployees,
+   * and nameLike.
    *
    * Returns [{ handle, name, description, numEmployees, logoUrl }, ...]
    * */
 
-  static async findAll(searchParams = {}) {
-
-    // minEmployees, maxEmployees, nameLike
-
+  static async search(searchParams = {}) {
     const { whereClause, values } = sqlForCompanySearch(searchParams);
-
     const companiesRes = await db.query(`
         SELECT handle,
                name,

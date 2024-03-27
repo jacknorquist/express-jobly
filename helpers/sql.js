@@ -1,6 +1,7 @@
 "use strict";
 
 const { BadRequestError } = require("../expressError");
+const { search } = require("../models/company");
 
 /* sqlforPartialUpdate: Takes dataToUpdate like {firstName:'Aliya' age:3} and
 *jsToSql like {firstName:first_name, age:age}. Returns object
@@ -24,37 +25,43 @@ function sqlForPartialUpdate(dataToUpdate, jsToSql) {
   };
 }
 
-
+/** Takes in searchParams object which contains some (or none) of keys:
+ * minEmployees, maxEmployees, nameLike
+ *
+ * Returns object containing paramterized sql WHERE clause and cooresponding values,
+ * that represents searching for companies that satisfy the
+ * constraints specified by the search parameters
+ *
+ * Input:
+ * { minEmployees, maxEmployees, nameLike}
+ *
+ * Output:
+ * {
+ *  whereClause: `WHERE (num_employees < $1 AND ...)`
+ *  values: [...]
+ * }
+*/
 function sqlForCompanySearch(searchParams) {
-  let index = 1;
-  const values = [];
-  const constraints = [];
+  const keys = Object.keys(searchParams);
+  if (keys.length === 0) return {whereClause: '', values: []};
 
-  if (searchParams.minEmployees !== undefined) {
-    constraints.push(`num_employees >= $${index}`);
-    values.push(searchParams.minEmployees);
-    index++;
-  }
-  if (searchParams.maxEmployees !== undefined) {
-    constraints.push(`num_employees <= $${index}`);
-    values.push(searchParams.maxEmployees);
-    index++;
-  }
   if (searchParams.nameLike !== undefined) {
-    constraints.push(`name ILIKE $${index}`);
-    values.push(`%${searchParams.nameLike}%`);
-    index++;
+    searchParams.nameLike = `%${searchParams.nameLike}%`;
   }
 
-  let whereClause = '';
-  if (constraints.length > 0) {
-    whereClause = `WHERE (${constraints.join(" AND ")})`
-  }
+  const sqlConstraintToQuery = {
+    minEmployees: (index) => `num_employees >= $${index}`,
+    maxEmployees: (index) => `num_employees <= $${index}`,
+    nameLike: (index) => `name ILIKE $${index}`
+  };
+
+  const constraints = keys.map(
+    (param, idx) => sqlConstraintToQuery[param](idx + 1));
 
   return {
-    whereClause,
-    values
-  }
+    whereClause: `WHERE (${constraints.join(" AND ")})`,
+    values: keys.map(key => searchParams[key])
+  };
 }
 
 module.exports = { sqlForPartialUpdate, sqlForCompanySearch };
