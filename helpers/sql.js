@@ -24,45 +24,4 @@ function sqlForPartialUpdate(dataToUpdate, jsToSql) {
   };
 }
 
-/** Takes in searchParams object which contains some (or none) of keys:
- * minEmployees, maxEmployees, nameLike
- *
- * Returns object containing paramterized sql WHERE clause and cooresponding values,
- * that represents searching for companies that satisfy the
- * constraints specified by the search parameters
- *
- * Input:
- * { minEmployees, maxEmployees, nameLike}
- *
- * Output:
- * {
- *  whereClause: `WHERE (num_employees < $1 AND ...)`
- *  values: [...]
- * }
-*/
-
-//Todo: put in company class:: ADD UNIT TESTS
-function sqlForCompanySearch(searchParams) {
-  const keys = Object.keys(searchParams);
-  if (keys.length === 0) return { whereClause: '', values: [] };
-
-  if (searchParams.nameLike !== undefined) {
-    searchParams.nameLike = `%${searchParams.nameLike}%`;
-  }
-
-  const sqlConstraintToQuery = {
-    minEmployees: (index) => `num_employees >= $${index}`,
-    maxEmployees: (index) => `num_employees <= $${index}`,
-    nameLike: (index) => `name ILIKE $${index}`
-  };
-
-  const constraints = keys.map(
-    (param, idx) => sqlConstraintToQuery[param](idx + 1));
-
-  return {
-    whereClause: `WHERE (${constraints.join(" AND ")})`,
-    values: keys.map(key => searchParams[key])
-  };
-}
-
-module.exports = { sqlForPartialUpdate, sqlForCompanySearch };
+module.exports = { sqlForPartialUpdate };

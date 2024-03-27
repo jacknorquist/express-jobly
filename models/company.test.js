@@ -144,6 +144,43 @@ describe("search", function () {
   });
 });
 
+/************************************** sqlForCompanySearch */
+
+describe("sqlForCompanySearch", function () {
+
+  test("works with no search params", async function () {
+    let sqlAndValues = Company.sqlForCompanySearch({});
+    expect(sqlAndValues).toEqual({
+      whereClause: "",
+      values: []
+    });
+  });
+
+  test("works with one search param", async function () {
+    let sqlAndValues = Company.sqlForCompanySearch({
+      nameLike: "and"
+    });
+    expect(sqlAndValues).toEqual({
+      whereClause: "WHERE (name ILIKE $1)",
+      values: ["%and%"]
+    });
+  });
+
+  test("works with three search params", async function () {
+    let sqlAndValues = Company.sqlForCompanySearch({
+      nameLike: "and",
+      minEmployees: 100,
+      maxEmployees: 1000
+    });
+    expect(sqlAndValues).toEqual({
+      whereClause: "WHERE (name ILIKE $1 AND num_employees >= $2 AND num_employees <= $3)",
+      values: ["%and%", 100, 1000]
+    });
+  });
+
+});
+
+
 /************************************** get */
 
 describe("get", function () {
