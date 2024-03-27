@@ -3,6 +3,7 @@
 /** Routes for companies. */
 
 const jsonschema = require("jsonschema");
+const companiesQuerySchema = require("../schemas/companiesQuerySchema.json");
 const express = require("express");
 
 const { BadRequestError } = require("../expressError");
@@ -28,7 +29,7 @@ router.post("/", ensureLoggedIn, async function (req, res, next) {
   const validator = jsonschema.validate(
     req.body,
     companyNewSchema,
-    {required: true}
+    { required: true }
   );
   if (!validator.valid) {
     const errs = validator.errors.map(e => e.stack);
@@ -51,7 +52,14 @@ router.post("/", ensureLoggedIn, async function (req, res, next) {
  */
 
 router.get("/", async function (req, res, next) {
-  const companies = await Company.findAll();
+  const result = jsonschema.validate(
+    req.params, companiesQuerySchema, { required: true });
+
+  if (!result.valid) {
+    const errs = result.errors.map(err => err.stack);
+    throw new BadRequestError(errs);
+  }
+  const companies = await Company.findAll(req.params);
   return res.json({ companies });
 });
 
@@ -83,7 +91,7 @@ router.patch("/:handle", ensureLoggedIn, async function (req, res, next) {
   const validator = jsonschema.validate(
     req.body,
     companyUpdateSchema,
-    {required:true}
+    { required: true }
   );
   if (!validator.valid) {
     const errs = validator.errors.map(e => e.stack);
