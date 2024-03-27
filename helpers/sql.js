@@ -24,4 +24,37 @@ function sqlForPartialUpdate(dataToUpdate, jsToSql) {
   };
 }
 
-module.exports = { sqlForPartialUpdate };
+
+function sqlForCompanySearch(searchParams) {
+  let index = 1;
+  const values = [];
+  const constraints = [];
+
+  if (searchParams.minEmployees !== undefined) {
+    constraints.push(`num_employees >= $${index}`);
+    values.push(searchParams.minEmployees);
+    index++;
+  }
+  if (searchParams.maxEmployees !== undefined) {
+    constraints.push(`num_employees <= $${index}`);
+    values.push(searchParams.maxEmployees);
+    index++;
+  }
+  if (searchParams.nameLike !== undefined) {
+    constraints.push(`name ILIKE $${index}`);
+    values.push(`%${searchParams.nameLike}%`);
+    index++;
+  }
+
+  let whereClause = '';
+  if (constraints.length > 0) {
+    whereClause = `WHERE (${constraints.join(" AND ")})`
+  }
+
+  return {
+    whereClause,
+    values
+  }
+}
+
+module.exports = { sqlForPartialUpdate, sqlForCompanySearch };
