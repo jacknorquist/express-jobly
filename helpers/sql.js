@@ -1,7 +1,6 @@
 "use strict";
 
 const { BadRequestError } = require("../expressError");
-const { search } = require("../models/company");
 
 /* sqlforPartialUpdate: Takes dataToUpdate like {firstName:'Aliya' age:3} and
 *jsToSql like {firstName:first_name, age:age}. Returns object
@@ -41,9 +40,11 @@ function sqlForPartialUpdate(dataToUpdate, jsToSql) {
  *  values: [...]
  * }
 */
+
+//Todo: put in company class:: ADD UNIT TESTS
 function sqlForCompanySearch(searchParams) {
   const keys = Object.keys(searchParams);
-  if (keys.length === 0) return {whereClause: '', values: []};
+  if (keys.length === 0) return { whereClause: '', values: [] };
 
   if (searchParams.nameLike !== undefined) {
     searchParams.nameLike = `%${searchParams.nameLike}%`;

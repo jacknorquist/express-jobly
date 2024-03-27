@@ -5,14 +5,23 @@ const companiesQuerySchema = require("../schemas/companiesQuerySchema.json");
 const { BadRequestError } = require("../expressError");
 
 
-/** Write something here */
+/** validateCompanySearchQuery:Takes queryAttributes object like
+ *  {nameLike:"..", minEmployees:2, maxEmployees:3}
+ * Validates that query search does not contain invalid keys. Acceptable keys are
+ * nameLike, minEmployees, and maxEmployee. Ensures that minEmployees and
+ * maxEmployee are numbers and that maxEmployee is not larger than minEmployee.
+ * Returns queryAttributes like
+ * {nameLike:"..", minEmployees:2, maxEmployees:3} if validated, badRequestError
+ *  if not.
+ *
+*/
 function validateCompanySearchQuery(queryAttributes) {
 
-  if (queryAttributes.minEmployees) {
-    queryAttributes.minEmployees = Number(queryAttributes.minEmployees)
+  if (queryAttributes.minEmployees !== undefined) {
+    queryAttributes.minEmployees = Number(queryAttributes.minEmployees);
   }
-  if (queryAttributes.maxEmployees) {
-    queryAttributes.maxEmployees = Number(queryAttributes.maxEmployees)
+  if (queryAttributes.maxEmployees !== undefined) {
+    queryAttributes.maxEmployees = Number(queryAttributes.maxEmployees);
   }
 
   // Checks that there are no additional query parameters
@@ -23,7 +32,7 @@ function validateCompanySearchQuery(queryAttributes) {
     const errs = result.errors.map(err => err.stack);
     throw new BadRequestError(errs);
   }
-
+  //evaluate min and max if they are not undefined
   const minEmp = queryAttributes.minEmployees;
   const maxEmp = queryAttributes.maxEmployees;
   if (minEmp && maxEmp && minEmp > maxEmp) {
@@ -35,4 +44,4 @@ function validateCompanySearchQuery(queryAttributes) {
 
 module.exports = {
   validateCompanySearchQuery
-}
+};

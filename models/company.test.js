@@ -57,6 +57,7 @@ describe("create", function () {
 });
 
 /************************************** search */
+//TODO: add test for min and max (badrequest)
 describe("search", function () {
   test("works: no filter", async function () {
     let companies = await Company.search();
