@@ -32,19 +32,15 @@ function authenticateJWT(req, res, next) {
 /**ensureCorrectUserOrAdmin: Check to see if current user is an
  * admin or if the current user is accessing their own user information.
  */
-//TODO: refactor
+
 function ensureCorrectUserOrAdmin(req, res, next) {
   const currentUser = res.locals.user;
 
+  if (!currentUser) throw new UnauthorizedError();
   if (currentUser?.isAdmin) return next();
+  if (currentUser?.username === req.params.username) return next();
 
-  const hasUnauthorizedUsername = currentUser?.username !== req.params.username;
-
-  if (!currentUser || hasUnauthorizedUsername) {
-    throw new UnauthorizedError();
-  }
-
-  return next();
+  throw new UnauthorizedError();
 }
 
 

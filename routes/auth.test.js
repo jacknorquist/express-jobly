@@ -19,7 +19,7 @@ afterAll(commonAfterAll);
 /************************************** POST /auth/token */
 
 describe("POST /auth/token", function () {
-  test("works", async function () {
+  test("valid login information", async function () {
     const resp = await request(app)
         .post("/auth/token")
         .send({
