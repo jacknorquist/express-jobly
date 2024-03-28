@@ -15,6 +15,7 @@ class Job {
    */
 
   static async create({ title, salary, equity, companyHandle }) {
+    console.log("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM");
     const companyExistsCheck = await db.query(`
         SELECT handle
         FROM companies

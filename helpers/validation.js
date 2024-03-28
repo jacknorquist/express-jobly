@@ -2,6 +2,7 @@
 
 const jsonschema = require("jsonschema");
 const companiesQuerySchema = require("../schemas/companiesQuerySchema.json");
+const jobSearchQuerySchema = require("../schemas/jobSearchQuerySchema.json");
 const { BadRequestError } = require("../expressError");
 
 
@@ -46,8 +47,31 @@ function validateCompanySearchQuery(queryAttributes) {
 
 function validateJobSearchQuery(queryAttributes) {
 
+  if (queryAttributes.minSalary) {
+    queryAttributes.minSalary = Number(queryAttributes.minSalary);
+  }
+  if (queryAttributes.hasEquity) {
+    if (queryAttributes.hasEquity != "true" && queryAttributes.hasEquity != "false") {
+      throw new BadRequestError("hasEquity must be true or false");
+    }
+    queryAttributes.hasEquity = (queryAttributes === "true");
+  }
+
+
+  const result = jsonschema.validate(
+    queryAttributes, jobSearchQuerySchema, { required: true });
+
+  if (!result.valid) {
+    const errs = result.errors.map(err => err.stack);
+    throw new BadRequestError(errs);
+  }
+
+  return queryAttributes;
+
+
 }
 
 module.exports = {
-  validateCompanySearchQuery
+  validateCompanySearchQuery,
+  validateJobSearchQuery
 };

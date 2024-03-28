@@ -7,7 +7,7 @@ const express = require("express");
 
 const { BadRequestError } = require("../expressError");
 const { ensureLoggedIn, ensureAdmin } = require("../middleware/auth");
-const Job = require("../models/company");
+const Job = require("../models/jobs");
 const { validateJobSearchQuery } = require("../helpers/validation");
 
 const jobNewSchema = require("../schemas/jobNew.json");
@@ -36,6 +36,7 @@ router.post("/", ensureAdmin, async function (req, res, next) {
     throw new BadRequestError(errs);
   }
 
+  console.log("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM");
   const job = await Job.create(req.body);
   return res.status(201).json({ job });
 });
@@ -52,7 +53,7 @@ router.post("/", ensureAdmin, async function (req, res, next) {
  */
 
 router.get("/", async function (req, res, next) {
-  const queryAttributes = validateJobSearchQuery(req.query); // TODO: write this
+  const queryAttributes = validateJobSearchQuery(req.query);
   const jobs = await Job.search(queryAttributes);
   return res.json({ jobs });
 });
