@@ -29,7 +29,10 @@ function authenticateJWT(req, res, next) {
   return next();
 
 }
-
+/**ensureCorrectUserOrAdmin: Check to see if current user is an
+ * admin or if the current user is accessing their own user information.
+ */
+//TODO: refactor
 function ensureCorrectUserOrAdmin(req, res, next) {
   const currentUser = res.locals.user;
 
@@ -45,7 +48,7 @@ function ensureCorrectUserOrAdmin(req, res, next) {
 }
 
 
-
+/**ensureAdmin: Checks to see if user is an admin.*/
 function ensureAdmin(req, res, next) {
   if (res.locals.user?.isAdmin) return next();
   throw new UnauthorizedError();
