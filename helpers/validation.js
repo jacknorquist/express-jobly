@@ -42,6 +42,12 @@ function validateCompanySearchQuery(queryAttributes) {
   return queryAttributes;
 }
 
+/** TODO: write docstring */
+
+function validateJobSearchQuery(queryAttributes) {
+
+}
+
 module.exports = {
   validateCompanySearchQuery
 };

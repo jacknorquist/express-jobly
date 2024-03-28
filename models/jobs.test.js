@@ -94,16 +94,16 @@ describe("search jobs", function () {
     let jobs = await Job.search();
     expect(jobs).toEqual([
       {
-        companyHandle: "c1",
-        equity: "0",
-        salary: 15000,
-        title: "Job Test1",
-      },
-      {
         companyHandle: "c2",
         equity: "0.01",
         title: "jobber",
         salary: 20000,
+      },
+      {
+        companyHandle: "c1",
+        equity: "0",
+        salary: 15000,
+        title: "Job Test1",
       },
       {
         title: "test job",
@@ -132,6 +132,8 @@ describe("search jobs", function () {
       }
     ]);
   });
+
+  // TODO: test for has equity and nulls
 
 });
 
