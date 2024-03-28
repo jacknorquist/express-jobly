@@ -5,7 +5,7 @@
 const jsonschema = require("jsonschema");
 const express = require("express");
 
-const { BadRequestError } = require("../expressError");
+const { BadRequestError, NotFoundError } = require("../expressError");
 const { ensureLoggedIn, ensureAdmin } = require("../middleware/auth");
 const Job = require("../models/jobs");
 const { validateJobSearchQuery } = require("../helpers/validation");
@@ -17,7 +17,7 @@ const router = new express.Router();
 
 /** POST / { job } =>  { job }
  *
- * job should be { title, salary, equity, campanyHandle }
+ * job should be { title, saladfgsry, equity, campanyHandle }
  *
  * Returns { id, title, salary, equity, campanyHandle }
  *
@@ -36,7 +36,6 @@ router.post("/", ensureAdmin, async function (req, res, next) {
     throw new BadRequestError(errs);
   }
 
-  console.log("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM");
   const job = await Job.create(req.body);
   return res.status(201).json({ job });
 });
@@ -54,6 +53,7 @@ router.post("/", ensureAdmin, async function (req, res, next) {
 
 router.get("/", async function (req, res, next) {
   const queryAttributes = validateJobSearchQuery(req.query);
+  console.log(queryAttributes);
   const jobs = await Job.search(queryAttributes);
   return res.json({ jobs });
 });
@@ -67,6 +67,7 @@ router.get("/", async function (req, res, next) {
  */
 
 router.get("/:id", async function (req, res, next) {
+  if (isNaN(parseInt(req.params.id))) throw new NotFoundError();
   const job = await Job.get(req.params.id);
   return res.json({ job });
 });
@@ -102,7 +103,7 @@ router.patch("/:id", ensureAdmin, async function (req, res, next) {
  * Authorization: admin
  */
 
-router.delete("/:handle", ensureAdmin, async function (req, res, next) {
+router.delete("/:id", ensureAdmin, async function (req, res, next) {
   await Job.remove(req.params.id);
   return res.json({ deleted: req.params.id });
 });

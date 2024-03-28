@@ -15,7 +15,6 @@ class Job {
    */
 
   static async create({ title, salary, equity, companyHandle }) {
-    console.log("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM");
     const companyExistsCheck = await db.query(`
         SELECT handle
         FROM companies
@@ -128,7 +127,8 @@ class Job {
         SELECT title,
                salary,
                equity,
-               company_handle AS "companyHandle"
+               company_handle AS "companyHandle",
+               id
         FROM jobs
         ${whereClause}
         ORDER BY title`, [...values]);

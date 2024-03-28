@@ -50,13 +50,17 @@ function validateJobSearchQuery(queryAttributes) {
   if (queryAttributes.minSalary) {
     queryAttributes.minSalary = Number(queryAttributes.minSalary);
   }
+
   if (queryAttributes.hasEquity) {
-    if (queryAttributes.hasEquity != "true" && queryAttributes.hasEquity != "false") {
+    if (queryAttributes.hasEquity !== "true" && queryAttributes.hasEquity !== "false") {
       throw new BadRequestError("hasEquity must be true or false");
     }
-    queryAttributes.hasEquity = (queryAttributes === "true");
+    if (queryAttributes.hasEquity === "false") {
+      delete queryAttributes.hasEquity;
+    } else {
+      queryAttributes.hasEquity = true;
+    }
   }
-
 
   const result = jsonschema.validate(
     queryAttributes, jobSearchQuerySchema, { required: true });

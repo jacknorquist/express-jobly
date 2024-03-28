@@ -98,11 +98,13 @@ describe("search jobs", function () {
         equity: "0.01",
         title: "jobber",
         salary: 20000,
+        id: expect.any(Number),
       },
       {
         companyHandle: "c1",
         equity: "0",
         salary: 15000,
+        id: expect.any(Number),
         title: "Job Test1",
       },
       {
@@ -110,23 +112,26 @@ describe("search jobs", function () {
         salary: 20000,
         equity: '0.15',
         companyHandle: "c3",
+        id: expect.any(Number),
       }
     ]);
   });
 
 
   test("works: for filter title, minSalary, hasEquity", async function () {
-    let companies = await Job.search({ titleLike: "job", minSalary: "10000", hasEquity: true });
-    expect(companies).toEqual([
+    let jobs = await Job.search({ titleLike: "job", minSalary: "10000", hasEquity: true });
+    expect(jobs).toEqual([
       {
         companyHandle: "c2",
         equity: "0.01",
         title: "jobber",
+        id: expect.any(Number),
         salary: 20000,
       },
       {
         title: "test job",
         salary: 20000,
+        id: expect.any(Number),
         equity: "0.15",
         companyHandle: "c3",
       }
