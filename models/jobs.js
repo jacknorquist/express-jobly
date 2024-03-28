@@ -70,21 +70,70 @@ class Job {
     return job;
   }
 
+  /** Takes in searchParams object which contains some (or none) of keys:
+* title, minSalary, equity
+*
+* Returns object containing paramterized sql WHERE clause and coresponding values,
+* that represents searching for jobs that satisfy the
+* constraints specified by the search parameters
+*
+* Input:
+* { title, minSalary, equity}
+*
+* Output:
+* {
+*  whereClause: `WHERE (minSalary > $1 AND ...)`
+*  values: [...]
+* }
+*/
+
+
+  static sqlForJobSearch(searchParams) {
+    console.log(searchParams);
+    const keys = Object.keys(searchParams);
+    if (keys.length === 0) return { whereClause: '', values: [] };
+
+    if (searchParams.titleLike !== undefined) {
+      searchParams.titleLike = `%${searchParams.titleLike}%`;
+    }
+
+    const sqlConstraintToQuery = {
+      minSalary: (index) => `salary >= $${index}`,
+      hasEquity: (index) => `(equity > 0) = $${index}`,
+      titleLike: (index) => `title ILIKE $${index}`
+    };
+
+    const constraints = keys.map(
+      (param, idx) => {
+        return sqlConstraintToQuery[param](idx + 1);
+      });
+
+    return {
+      whereClause: `WHERE (${constraints.join(" AND ")})`,
+      values: keys.map(key => searchParams[key])
+    };
+  }
+
   /** Find all jobs
    *
    * Returns [{ id, title, salary, equity, company_handle }, ...]
    **/
 
-  static async getAll() {
-    const result = await db.query(`
-          SELECT title, salary, equity, company_handle as "companyHandle", id
-          FROM jobs
-          ORDER BY title`,
-    );
 
-    return result.rows;
+  static async search(searchParams = {}) {
+    const { whereClause, values } = Job.sqlForJobSearch(searchParams);
+    console.log(whereClause, values);
+    const jobsRes = await db.query(`
+        SELECT title,
+               salary,
+               equity,
+               company_handle AS "companyHandle"
+        FROM jobs
+        ${whereClause}
+        ORDER BY title`, [...values]);
+
+    return jobsRes.rows;
   }
-
 
   /** Update job data with `data`.
    *

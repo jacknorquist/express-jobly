@@ -67,29 +67,28 @@ class Company {
  * }
 */
 
-//Todo: put in company class:: ADD UNIT TESTS
-static sqlForCompanySearch(searchParams) {
-  const keys = Object.keys(searchParams);
-  if (keys.length === 0) return { whereClause: '', values: [] };
+  static sqlForCompanySearch(searchParams) {
+    const keys = Object.keys(searchParams);
+    if (keys.length === 0) return { whereClause: '', values: [] };
 
-  if (searchParams.nameLike !== undefined) {
-    searchParams.nameLike = `%${searchParams.nameLike}%`;
+    if (searchParams.nameLike !== undefined) {
+      searchParams.nameLike = `%${searchParams.nameLike}%`;
+    }
+
+    const sqlConstraintToQuery = {
+      minEmployees: (index) => `num_employees >= $${index}`,
+      maxEmployees: (index) => `num_employees <= $${index}`,
+      nameLike: (index) => `name ILIKE $${index}`
+    };
+
+    const constraints = keys.map(
+      (param, idx) => sqlConstraintToQuery[param](idx + 1));
+
+    return {
+      whereClause: `WHERE (${constraints.join(" AND ")})`,
+      values: keys.map(key => searchParams[key])
+    };
   }
-
-  const sqlConstraintToQuery = {
-    minEmployees: (index) => `num_employees >= $${index}`,
-    maxEmployees: (index) => `num_employees <= $${index}`,
-    nameLike: (index) => `name ILIKE $${index}`
-  };
-
-  const constraints = keys.map(
-    (param, idx) => sqlConstraintToQuery[param](idx + 1));
-
-  return {
-    whereClause: `WHERE (${constraints.join(" AND ")})`,
-    values: keys.map(key => searchParams[key])
-  };
-}
 
   /** Finds all companies that match the input search parameters.
    * searchParams will contain some (or none) of minEmployees, maxEmployees,

@@ -88,17 +88,47 @@ describe("get", function () {
 
 /************************************** get all */
 
-describe("get all job", function () {
+describe("search jobs", function () {
 
   test("works", async function () {
-    let jobs = await Job.getAll();
+    let jobs = await Job.search();
     expect(jobs).toEqual([
       {
         companyHandle: "c1",
         equity: "0",
-        id: 1,
         salary: 15000,
         title: "Job Test1",
+      },
+      {
+        companyHandle: "c2",
+        equity: "0.01",
+        title: "jobber",
+        salary: 20000,
+      },
+      {
+        title: "test job",
+        salary: 20000,
+        equity: '0.15',
+        companyHandle: "c3",
+      }
+    ]);
+  });
+
+
+  test("works: for filter title, minSalary, hasEquity", async function () {
+    let companies = await Job.search({ titleLike: "job", minSalary: "10000", hasEquity: true });
+    expect(companies).toEqual([
+      {
+        companyHandle: "c2",
+        equity: "0.01",
+        title: "jobber",
+        salary: 20000,
+      },
+      {
+        title: "test job",
+        salary: 20000,
+        equity: "0.15",
+        companyHandle: "c3",
       }
     ]);
   });
@@ -129,10 +159,10 @@ describe("update", function () {
 
   test("works: null fields", async function () {
     const updateDataSetNulls = {
-    title: "worker3",
-    salary: null,
-    equity: null,
-    companyHandle: 'c1',
+      title: "worker3",
+      salary: null,
+      equity: null,
+      companyHandle: 'c1',
     };
 
     let job = await Job.update(testJob[0].id, updateDataSetNulls);
