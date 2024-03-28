@@ -41,6 +41,21 @@ class Job {
     return job;
   }
 
+  static async get(jobId) {
+    const result = await db.query(
+      `SELECT title, salary, equity, company_handle as "companyHandle", id
+      FROM jobs
+      WHERE id = $1`,
+      [jobId]
+    );
+    const job = result.rows[0];
+    console.log(job);
+
+    if (!job) throw new NotFoundError(`No company id: ${jobId}`);
+
+    return job;
+  }
+
 
 
 

@@ -9,12 +9,15 @@ const {
   commonBeforeEach,
   commonAfterEach,
   commonAfterAll,
+  testJob
 } = require("./_testCommon");
 
 beforeAll(commonBeforeAll);
 beforeEach(commonBeforeEach);
 afterEach(commonAfterEach);
 afterAll(commonAfterAll);
+
+
 
 /************************************** create */
 
@@ -32,14 +35,12 @@ describe("create", function () {
     salary: 100000,
     equity: "0",
     companyHandle: 'not a valid handle',
-  }
+  };
 
   test("works", async function () {
     const job = await Job.create(newJob);
     const newJobId = job.id;
     delete job.id;
-    console.log(job);
-    console.log(newJob);
     expect(job).toEqual(newJob);
 
     const result = await db.query(
@@ -71,19 +72,14 @@ describe("create", function () {
 describe("get", function () {
 
   test("works", async function () {
-    let job = await Job.get();
-    expect(job).toEqual({
-      handle: "c1",
-      name: "C1",
-      description: "Desc1",
-      numEmployees: 1,
-      logoUrl: "http://c1.img",
-    });
+    console.log(testJob[0]);
+    let job = await Job.get(testJob[0].id);
+    expect(job).toEqual(testJob[0]);
   });
 
   test("not found if no such job", async function () {
     try {
-      await Company.get("nope");
+      const result = await Job.get(1000000000);
       throw new Error("fail test, you shouldn't get here");
     } catch (err) {
       expect(err instanceof NotFoundError).toBeTruthy();
