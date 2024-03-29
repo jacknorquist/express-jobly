@@ -171,6 +171,9 @@ class Job {
     return job;
   }
 
+
+
+
   /** Delete given job from database; returns undefined.
    *
    * Throws NotFoundError if job not found.
