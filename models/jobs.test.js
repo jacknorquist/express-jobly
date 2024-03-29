@@ -138,8 +138,6 @@ describe("search jobs", function () {
     ]);
   });
 
-  // TODO: test for has equity and nulls
-
 });
 
 /************************************** update */

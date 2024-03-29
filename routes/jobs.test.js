@@ -174,7 +174,7 @@ describe("GET /jobs/:id", function () {
 });
 
 /************************************** PATCH /jobs/:handle */
-//Test annon user gets 401
+
 describe("PATCH /jobs/:handle", function () {
 
   test("works for admin", async function () {

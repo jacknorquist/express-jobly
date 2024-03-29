@@ -53,7 +53,6 @@ router.post("/", ensureAdmin, async function (req, res, next) {
 
 router.get("/", async function (req, res, next) {
   const queryAttributes = validateJobSearchQuery(req.query);
-  console.log(queryAttributes);
   const jobs = await Job.search(queryAttributes);
   return res.json({ jobs });
 });

@@ -43,7 +43,10 @@ function validateCompanySearchQuery(queryAttributes) {
   return queryAttributes;
 }
 
-/** TODO: write docstring */
+/** Ensures that queryAttributes contains only hasEquity, titleLike,
+ * and minSalary and that all inputs are valid
+ *
+ * Removes hasEquity if the value is anything other than true */
 
 function validateJobSearchQuery(queryAttributes) {
 
@@ -71,8 +74,6 @@ function validateJobSearchQuery(queryAttributes) {
   }
 
   return queryAttributes;
-
-
 }
 
 module.exports = {
