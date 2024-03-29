@@ -84,6 +84,7 @@ router.get("/:id", async function (req, res, next) {
  */
 
 router.patch("/:id", ensureAdmin, async function (req, res, next) {
+  if (isNaN(parseInt(req.params.id))) throw new NotFoundError();
   const validator = jsonschema.validate(
     req.body,
     jobUpdateSchema,
@@ -104,6 +105,7 @@ router.patch("/:id", ensureAdmin, async function (req, res, next) {
  */
 
 router.delete("/:id", ensureAdmin, async function (req, res, next) {
+  if (isNaN(parseInt(req.params.id))) throw new NotFoundError();
   await Job.remove(req.params.id);
   return res.json({ deleted: req.params.id });
 });
